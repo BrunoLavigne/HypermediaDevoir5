@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+    
+<html>
+    <head>
+        <title>Articles de bureau</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <link href="Ressources/css/bootstrap.min.css" rel="stylesheet">
+        <link href="Ressources/css/heroic-features.css" rel="stylesheet">
+        
+        <script type="text/javascript">
+            function encode(password){
+                var encryptedPassword = btoa(password);
+                var passwordElement = document.getElementById('password');
+                passwordElement.value = encryptedPassword;
+                document.forms["login"].submit();
+            }
+        </script>
+    </head>
+    <body>
+        
+        <div class="container">
+        
+            <header class="jumbotron hero-spacer">
+                                
+                <h1 style="text-align:center">Articles de bureau</h1>
+                       
+            </header>
+
+            <hr>
+        
+        </div>
+        
+        <div class="container">
+            
+            <div class="row" style="text-align:center">
+            
+            <div class="col-lg-6 col-md-offset-3">
+                
+                <h3>Connexion</h3></br>
+                
+                <form method="POST" name="login" action="accessServlet">
+                    
+                    <input type="hidden" name="actionType" value="login">
+                    
+                    <div class="form-group">
+                        <label for="username">Utilisateur</label>
+                        <input type="text" class="form-control" id="username" name='loginName' placeholder='Entrez votre nom utilisateur'>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Mot de passe</label>
+                        <input type="password" class="form-control" id="password" name='loginPW' placeholder='Entrez votre mot de passe'>
+                    </div>
+                    
+                    </br>
+                    
+                    <input type='submit' class="btn-lg-primary" value='Submit' id='btnSubmitToProducts'>
+                    <input type='button' class="btn-lg-primary" value='Connexion' id='btnLoadProducts' onclick="encode(document.getElementById('password').value)">
+                    
+                </form>
+                
+                
+            </div>
+                
+        </div>
+        
+        </div>
+        
+
+
+    </body>
+</html>
