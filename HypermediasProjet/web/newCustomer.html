@@ -23,7 +23,7 @@ and open the template in the editor.
                 var encryptedPassword = btoa(password);
                 var passwordElement = document.getElementById('password');
                 passwordElement.value = encryptedPassword;
-                document.forms["login"].submit();
+                document.forms["registerCustomer"].submit();
             }
         </script>
     </head>
@@ -47,11 +47,11 @@ and open the template in the editor.
             
             <div class="col-lg-6 col-md-offset-3">
                 
-                <h3>Connexion</h3></br>
+                <h3>Enregistrement</h3></br>
                 
-                <form method="POST" name="login" action="accessServlet">
+                <form method="POST" name="registerCustomer" action="accessServlet">
                     
-                    <input type="hidden" name="actionType" value="login">
+                    <input type="hidden" name="actionType" value="registerCustomer">
                     
                     <div class="form-group">
                         <label for="username">Utilisateur</label>
@@ -63,20 +63,25 @@ and open the template in the editor.
                         <input type="password" class="form-control" id="password" name='loginPW' placeholder='Entrez votre mot de passe'>
                     </div>
                     
+                    <div class="form-group">
+                        <label for="addresse">Addresse</label>
+                        <input type="text" class="form-control" id="addresse" name='addresse' placeholder='Entrez votre addresse'>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="age">Age</label>
+                        <input type="text" class="form-control" id="age" name='age' placeholder='Entrez votre age'>
+                    </div>
+                    
                     </br>
                     
                     <!---
                         <input type='button' class="btn-lg-primary" value='Submit' id='btnSubmitToProducts' onclick="establishConnexion()">
                     --->
-                    <input type='button' class="btn-lg-primary" value='Connexion' id='btnLoadProducts' onclick="encode(document.getElementById('password').value)">
+                    <input type='button' class="btn-lg-primary" value='Enregister' id='btnLoadProducts' onclick="encode(document.getElementById('password').value)">
                     
                 </form>
-                
-                <form method="POST" name="newLogin" action="accessServlet">
-                    <input type="hidden" name="actionType" value="newLogin">
-                    <input type='submit' class="btn-lg-primary" value='Nouvel utilisateur' id='btnNewLogin'>
-                </form>
-                
+                               
                 
             </div>
                 

@@ -35,7 +35,8 @@
                                                 
                 <% for(int i = 0; i < cart.getCartClient().size(); i++){ %>
                                                  
-                    <form method="POST" action="accessServlet" value="final">
+                    <form method="POST" action="accessServlet" value="retirerProduit">
+                        <input type="hidden" name="actionType" value="retirerProduit">
                         <input type="hidden" name="productNumber" value="<%= cart.getCartClient().get(i).getCode() %>" >
                     <tr>
                         <td align="center"><%= cart.getCartClient().get(i).getNom() %></td>

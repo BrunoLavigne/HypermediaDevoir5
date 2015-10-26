@@ -14,18 +14,7 @@ and open the template in the editor.
         <link href="Ressources/css/bootstrap.min.css" rel="stylesheet">
         <link href="Ressources/css/heroic-features.css" rel="stylesheet">
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-        
-        <script type="text/javascript">
-            
 
-            
-            function encode(password){
-                var encryptedPassword = btoa(password);
-                var passwordElement = document.getElementById('password');
-                passwordElement.value = encryptedPassword;
-                document.forms["login"].submit();
-            }
-        </script>
     </head>
     <body>
         
@@ -49,18 +38,13 @@ and open the template in the editor.
                 
                 <h3>Connexion</h3></br>
                 
-                <form method="POST" name="login" action="accessServlet">
+                <form method="POST" name="returnToLogin" action="accessServlet">
                     
-                    <input type="hidden" name="actionType" value="login">
-                    
-                    <div class="form-group">
-                        <label for="username">Utilisateur</label>
-                        <input type="text" class="form-control" id="username" name='loginName' placeholder='Entrez votre nom utilisateur'>
-                    </div>
+                    <input type="hidden" name="actionType" value="returnToLogin">
                     
                     <div class="form-group">
-                        <label for="password">Mot de passe</label>
-                        <input type="password" class="form-control" id="password" name='loginPW' placeholder='Entrez votre mot de passe'>
+                        <h6>connection refus&eacute;</h6>
+                        <h6>Veuillez retourner &agrave; la page d'accueil</h6>
                     </div>
                     
                     </br>
@@ -68,13 +52,8 @@ and open the template in the editor.
                     <!---
                         <input type='button' class="btn-lg-primary" value='Submit' id='btnSubmitToProducts' onclick="establishConnexion()">
                     --->
-                    <input type='button' class="btn-lg-primary" value='Connexion' id='btnLoadProducts' onclick="encode(document.getElementById('password').value)">
+                    <input type='Submit' class="btn-lg-primary" value='Retour' id='btnLoadProducts'>
                     
-                </form>
-                
-                <form method="POST" name="newLogin" action="accessServlet">
-                    <input type="hidden" name="actionType" value="newLogin">
-                    <input type='submit' class="btn-lg-primary" value='Nouvel utilisateur' id='btnNewLogin'>
                 </form>
                 
                 

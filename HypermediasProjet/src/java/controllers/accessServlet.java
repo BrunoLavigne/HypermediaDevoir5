@@ -27,6 +27,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import models.Cart;
+import models.ListeDesClients;
+import views.Client;
 import views.Produits;
 
 /**
@@ -37,7 +39,6 @@ import views.Produits;
 public class accessServlet extends HttpServlet {
     
     private HttpSession session;
-    
     
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
@@ -94,6 +95,20 @@ public class accessServlet extends HttpServlet {
                     System.out.println("Request login action type found...");
                     System.out.println("Beginning log-in function...");
                     login(request, response);
+                    break;
+                
+                case "newLogin":
+                    newLogin(request, response);
+                    break;
+                
+                case "registerCustomer":
+                    registerCustomer(request, response);
+                    break;
+                    
+                case "returnToLogin":
+                    System.out.println("Request return to login action type found...");
+                    System.out.println("Beginning return to index function...");
+                    returnToLogin(request, response);
                     break;
                     
                 case "ajouterProduit":
@@ -182,14 +197,15 @@ public class accessServlet extends HttpServlet {
                 session.setAttribute("username", username);
                 // session.setAttribute("password", encryptedPWbytes);
                 session.setAttribute("password", decryptedPW);
+                response.setStatus(HttpServletResponse.SC_ACCEPTED);
                 
             } else {
                 
                 System.out.println("Password rejected!");
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                return;
                 
             }
+            
         } else if (username.equals(adminName)){
             
             if (adminPassword.equals(decryptedPW)){
@@ -200,29 +216,93 @@ public class accessServlet extends HttpServlet {
                 // session.setAttribute("password", encryptedPWbytes);
                 session.setAttribute("password", decryptedPW);
                 session.setAttribute("isAdministrator", true);
+                response.setStatus(HttpServletResponse.SC_ACCEPTED);
                 
             } else {
                 
                 System.out.println("Password rejected!");
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                return;
                 
             }
-        } else {
+            
+        } else if(findClientName(username) != null){
+            Client client = findClientName(username);
+            
+            byte [] clientPW = client.getPassword();
+            String decryptedClientPW = new String(Base64.getDecoder().decode(clientPW));
+            
+            if(decryptedClientPW.equals(decryptedPW)){
+                session.setAttribute("username", username);
+                session.setAttribute("password", decryptedPW);
+                response.setStatus(HttpServletResponse.SC_ACCEPTED);
+                
+            } else {
+                System.out.println("Password rejected!");
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);  
+            }
+        }
+        
+        else {
             
             System.out.println("Invalid unsername!");
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            return;
             
         }
-        
-        System.out.println("Loading main page...");
-        
+                                      
         try {
-            loadProducts(request, response);
+            
+            if(response.getStatus() != HttpServletResponse.SC_ACCEPTED){
+                connectionRefused(request, response);
+            } else {
+                loadProducts(request, response);
+            }     
+            
         } catch (ServletException | IOException ex) {
             Logger.getLogger(accessServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
+
+    }
+    
+    private void registerCustomer(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        
+        session = request.getSession();
+        
+        String nom = request.getParameter("loginName");
+        byte[] password = request.getParameter("loginPW").getBytes(StandardCharsets.UTF_8);;
+        String addresse = request.getParameter("addresse");
+        int age = Integer.parseInt(request.getParameter("age"));
+        
+        Client client = new Client(nom, password, addresse, age);
+        
+        if(session.getAttribute("listeClients") == null){
+            setListeDesClients(new ArrayList<>());
+        }
+        
+        getListeDesClients().add(client);
+        
+        String url = "/index.html";
+        RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(url);
+        dispatcher.forward(request, response);
+        
+    }
+    
+    private void newLogin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        
+        String url = "/newCustomer.html";
+        RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(url);
+        dispatcher.forward(request, response);
+    }
+    
+    protected void connectionRefused(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException { 
+        
+        response.setContentType("text/html;charset=UTF-8");
+        
+        String url = "/connectionRefused.html";
+        RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(url);
+        dispatcher.forward(request, response);
+    
     }
     
 
@@ -305,23 +385,27 @@ public class accessServlet extends HttpServlet {
             return;
         } 
         String code = request.getParameter("productNumber"); 
-        int qty = Integer.parseInt(request.getParameter("qty")); 
-        getCart().addItem(getProductByCode(code), qty);
+        //int qty = Integer.parseInt(request.getParameter("qty")); 
+        //getCart().addItem(getProductByCode(code), qty);
+        getCart().removeProduct(code);
         int nbItems = getCart().getNbItems();
         session.setAttribute("produit", nbItems);
-        
-        String url = "/afficherCart.jsp";
-        RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(url);
+        request.setAttribute("cart", getCart());
+        request.setAttribute("total", getCart().getTotal());
         request.setAttribute("listeProduits", getListeDesProduits());
+        
+        String url = "/checkout.jsp";
+        RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(url);      
         dispatcher.forward(request, response);
     }
     
     private void clearCart(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
         System.out.println("Erasing the cart NOW!");
-        getCart().eraseCart();
+        setCart(new Cart());
+        
         System.out.println("Cart erased: nbItems :" + getCart().getNbItems());
         System.out.println("Redirecting to cart modification page...");
-        String url = "/afficherCart.jsp";
+        String url = "/listerProduits.jsp";
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(url);
         dispatcher.forward(request, response);
     }
@@ -383,6 +467,13 @@ public class accessServlet extends HttpServlet {
         
     }
     
+    
+    private void returnToLogin(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        String url = "/index.html";
+        RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(url);
+        dispatcher.forward(request, response);
+    }
+    
     // GETTER ET SETTER
     
     public Produits getProductByCode(String code){
@@ -410,5 +501,25 @@ public class accessServlet extends HttpServlet {
     
     private ArrayList<Produits> getListeDesProduits() {
         return (ArrayList<Produits>) session.getAttribute("listeProduits");
+    }
+    
+    private void setListeDesClients(ArrayList<Client> liste) {
+        session.setAttribute("listeClients", liste);
+    }
+    
+    private ArrayList<Client> getListeDesClients() {
+        return (ArrayList<Client>) session.getAttribute("listeClients");
+    }
+    
+    private Client findClientName(String nomClient){
+        
+        Client clientRecherche = null;
+        for(Client client : getListeDesClients()){
+            if(nomClient.equals(client.getNom())){
+                clientRecherche = client;
+            }
+        }
+        
+        return clientRecherche;
     }
 }

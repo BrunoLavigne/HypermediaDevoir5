@@ -1,5 +1,3 @@
-
-
 <%@page import="java.util.ArrayList"%>
 <%@page import="views.Produits"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -16,15 +14,17 @@
             ArrayList<Produits> listeProduits = (ArrayList<Produits>) session.getAttribute("listeProduits");
             session.setAttribute("total", 0);
         %>
-        
+               
         <table border="1">
                 <tr>
-                    <th>Nom</th>
+                    <th>nom</th>
                     <th>Description</th>
                     <th>Prix</th>
                     <th>Quantite</th>                
                     <th>Order</th>
                 </tr>
+                
+                
                 
                 <% for(int i = 0; i < listeProduits.size(); i++){ %>
                     <form method="POST" action="accessServlet">
@@ -33,15 +33,18 @@
                         <tr>
                             <td><%= listeProduits.get(i).getNom() %></td>
                             <td><%= listeProduits.get(i).getDescription() %></td>
-                            <td><%= listeProduits.get(i).getBaseUnitPrice()%></td>
-                            <td> 
+                            <td><%= listeProduits.get(i).getBaseUnitPrice() %><td>
+                  
+                                <input type="text" value="1" id="qty" name="qty" style="text-align:center">
+                                <!--
                                 <select name="qty">
                                     <option value="1">1</option>
                                     <option value="2">2</option>
                                     <option value="3">3</option>
                                     <option value="4">4</option>
-                                </select> 
-                            </td>                        
+                                </select>
+                                -->
+                                         
                             <td><input type="submit" value="Submit" name='addToCart' id='btnCart'></td>
                         </tr>
                     </form>
@@ -49,6 +52,8 @@
                 <% } %>                
 
         </table>
+                
+
         
     </body>
 </html>
