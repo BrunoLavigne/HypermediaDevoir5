@@ -199,6 +199,7 @@ public class accessServlet extends HttpServlet {
                 
                 System.out.println("Password accepted!");
                 System.out.println("User is now connected.");
+                session.setAttribute("isAdministrator", false);
                 session.setAttribute("username", username);
                 // session.setAttribute("password", encryptedPWbytes);
                 session.setAttribute("password", decryptedPW);
@@ -234,13 +235,15 @@ public class accessServlet extends HttpServlet {
                 
             }
             
-        } else if(findClientName(username) != null){
+        } else if(getListeDesClients() != null){
+            
             Client client = findClientName(username);
             
             byte [] clientPW = client.getPassword();
             String decryptedClientPW = new String(Base64.getDecoder().decode(clientPW));
             
             if(decryptedClientPW.equals(decryptedPW)){
+                session.setAttribute("isAdministrator", false);
                 session.setAttribute("username", username);
                 session.setAttribute("password", decryptedPW);
                 session.setAttribute("adresse", client.getAddresse());
@@ -409,11 +412,16 @@ public class accessServlet extends HttpServlet {
         } while (true);
         
         setCart(new Cart());
+        String url = "";
         
         session.setAttribute("listeProduits", listeDesProduits);
         session.setAttribute("cart", getCart());
+        if((boolean)session.getAttribute("isAdministrator")){
+            url = "/selectProduitVedette.jsp";
+        } else{
+            url = "/listerProduits.jsp";
+        }
         
-        String url = "/listerProduits.jsp";
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(url);
         dispatcher.forward(request, response);
 
@@ -598,4 +606,5 @@ public class accessServlet extends HttpServlet {
         
         return clientRecherche;
     }
+
 }
