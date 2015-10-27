@@ -12,11 +12,11 @@ package views;
 public class Client {
     
     private String nom;
-    private byte[] password;
+    private String password;
     private String addresse;
     private int age;
     
-    public Client(String nom, byte[] password, String addresse, int age){
+    public Client(String nom, String password, String addresse, int age){
         setNom(nom);
         setPassword(password);
         setAddresse(addresse);
@@ -31,11 +31,11 @@ public class Client {
         this.nom = nom;
     }
 
-    public byte[] getPassword() {
+    public String getPassword() {
         return password;
     }
 
-    private void setPassword(byte[] password) {
+    private void setPassword(String password) {
         this.password = password;
     }
 

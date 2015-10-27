@@ -22,8 +22,10 @@ import java.util.Base64;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -42,7 +44,8 @@ import views.Produits;
  */
 @WebServlet("/controllers/accessServlet")
 public class accessServlet extends HttpServlet {
-    
+    private final static Logger logger = Logger.getLogger(accessServlet.class.getName());
+    private static FileHandler fh = null;
     private HttpSession session;
     
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -73,11 +76,20 @@ public class accessServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        System.out.println("Executing doPost() method...");
+        try {
+            fh = new FileHandler("loggerExample.log", true);
+            fh.setFormatter(new SimpleFormatter());
+            logger.addHandler(fh);
+            logger.setLevel(Level.ALL);
+        } catch (SecurityException | IOException e) {
+            e.printStackTrace();
+        }
+        
+        logger.log(Level.INFO, "Executing doPost() method...");
         
         // Obtention des paramètres de la requête.
         Map<String, String> map = new HashMap<>();
-        System.out.println("Reading request parameters...");
+        logger.log(Level.INFO, "Reading request parameters...");
         Enumeration nomsParametres = request.getParameterNames();   
         
         while (nomsParametres.hasMoreElements()) {
@@ -85,7 +97,7 @@ public class accessServlet extends HttpServlet {
             String key = (String) nomsParametres.nextElement();
             String value = request.getParameter(key);
             map.put(key, value);
-            System.out.println("Parameter found: [" + key + "] with value: [" + value + "]");
+            logger.log(Level.INFO, "Parameter found: [" + key + "] with value: [" + value + "]");
             
 	}
         
@@ -97,8 +109,8 @@ public class accessServlet extends HttpServlet {
             switch (actionType) {
                 
                 case "login":
-                    System.out.println("Request login action type found...");
-                    System.out.println("Beginning log-in function...");
+                    logger.log(Level.INFO, "Request login action type found...");
+                    logger.log(Level.INFO, "Beginning log-in function...");
                     login(request, response);
                     break;
                 
@@ -111,44 +123,44 @@ public class accessServlet extends HttpServlet {
                     break;
                     
                 case "returnToLogin":
-                    System.out.println("Request return to login action type found...");
-                    System.out.println("Beginning return to index function...");
+                    logger.log(Level.INFO, "Request return to login action type found...");
+                    logger.log(Level.INFO, "Beginning return to index function...");
                     returnToLogin(request, response);
                     break;
                     
                 case "ajouterProduit":
-                    System.out.println("Request add product to cart action type found...");
-                    System.out.println("Beginning add-to-cart function...");
+                    logger.log(Level.INFO, "Request add product to cart action type found...");
+                    logger.log(Level.INFO, "Beginning add-to-cart function...");
                     addToCart(request, response);
                     break;
                     
                 case "retirerProduit":
-                    System.out.println("Request substract product from cart action type found...");
-                    System.out.println("Beginning substract-from-cart function...");
+                    logger.log(Level.INFO, "Request substract product from cart action type found...");
+                    logger.log(Level.INFO, "Beginning substract-from-cart function...");
                     removeFromCart(request, response);
                     break;
                     
                 case "checkout":
-                    System.out.println("Request checkout action type found...");
-                    System.out.println("Beginning checkout function...");
+                    logger.log(Level.INFO, "Request checkout action type found...");
+                    logger.log(Level.INFO, "Beginning checkout function...");
                     loadCheckout(request, response);
                     break;
                     
                 case "viderCart":
-                    System.out.println("Request empty-the-cart action type found...");
-                    System.out.println("Beginning empty-the-cart function...");
+                    logger.log(Level.INFO, "Request empty-the-cart action type found...");
+                    logger.log(Level.INFO, "Beginning empty-the-cart function...");
                     clearCart(request, response);
                     break;
                     
                 case "cancel":
-                    System.out.println("Request checkout cancellation action type found...");
-                    System.out.println("Beginning checkout cancellation function...");
+                    logger.log(Level.INFO, "Request checkout cancellation action type found...");
+                    logger.log(Level.INFO, "Beginning checkout cancellation function...");
                     clearCart(request, response);
                     break;
                     
                 case "confirmation":
-                    System.out.println("Request checkout confirmation action type found...");
-                    System.out.println("Beginning checkout confirmation function...");
+                    logger.log(Level.INFO, "Request checkout confirmation action type found...");
+                    logger.log(Level.INFO, "Beginning checkout confirmation function...");
                     finalizeOrder(request, response);
                     break;
                     
@@ -182,23 +194,23 @@ public class accessServlet extends HttpServlet {
         
         //administrateur
         String username = request.getParameter("loginName");
-        System.out.println("Login name received: " + username);
+        logger.log(Level.INFO, "Login name received: " + username);
         byte[] encryptedPWbytes = request.getParameter("loginPW").getBytes(StandardCharsets.UTF_8);
-        System.out.println("Crypted login password byte array received: " + Arrays.toString(encryptedPWbytes));
-        System.out.println("Decrypting password bytes...");
+        logger.log(Level.INFO, "Crypted login password byte array received: " + Arrays.toString(encryptedPWbytes));
+        logger.log(Level.INFO, "Decrypting password bytes...");
         String decryptedPW = new String(Base64.getDecoder().decode(encryptedPWbytes));
         
         //String decryptedPW = request.getParameter("loginPW");
-        System.out.println("Password decrypted! : " + decryptedPW);
+        logger.log(Level.INFO, "Password decrypted! : " + decryptedPW);
         
         if (username.equals(userName)){
             
-            System.out.println("User Name found! checking password...");
+            logger.log(Level.INFO, "User Name found! checking password...");
             
             if (userPassword.equals(decryptedPW)){
                 
-                System.out.println("Password accepted!");
-                System.out.println("User is now connected.");
+                logger.log(Level.INFO, "Password accepted!");
+                logger.log(Level.INFO, "User is now connected.");
                 session.setAttribute("username", username);
                 // session.setAttribute("password", encryptedPWbytes);
                 session.setAttribute("password", decryptedPW);
@@ -208,7 +220,7 @@ public class accessServlet extends HttpServlet {
                 
             } else {
                 
-                System.out.println("Password rejected!");
+                logger.log(Level.INFO, "Password rejected!");
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                 
             }
@@ -217,8 +229,8 @@ public class accessServlet extends HttpServlet {
             
             if (adminPassword.equals(decryptedPW)){
                 
-                System.out.println("Password accepted!");
-                System.out.println("User is now connected as administrator.");
+                logger.log(Level.INFO, "Password accepted!");
+                logger.log(Level.INFO, "User is now connected as administrator.");
                 session.setAttribute("username", username);
                 // session.setAttribute("password", encryptedPWbytes);
                 session.setAttribute("password", decryptedPW);
@@ -229,7 +241,7 @@ public class accessServlet extends HttpServlet {
                 
             } else {
                 
-                System.out.println("Password rejected!");
+                logger.log(Level.INFO, "Password rejected!");
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                 
             }
@@ -237,10 +249,9 @@ public class accessServlet extends HttpServlet {
         } else if(findClientName(username) != null){
             Client client = findClientName(username);
             
-            byte [] clientPW = client.getPassword();
-            String decryptedClientPW = new String(Base64.getDecoder().decode(clientPW));
+            String clientPW = client.getPassword();
             
-            if(decryptedClientPW.equals(decryptedPW)){
+            if(clientPW.equals(decryptedPW)){
                 session.setAttribute("username", username);
                 session.setAttribute("password", decryptedPW);
                 session.setAttribute("adresse", client.getAddresse());
@@ -248,14 +259,14 @@ public class accessServlet extends HttpServlet {
                 response.setStatus(HttpServletResponse.SC_ACCEPTED);
                 
             } else {
-                System.out.println("Password rejected!");
+                logger.log(Level.INFO, "Password rejected!");
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);  
             }
         }
         
         else {
             
-            System.out.println("Invalid unsername!");
+            logger.log(Level.INFO, "Invalid unsername!");
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             
         }
@@ -280,13 +291,14 @@ public class accessServlet extends HttpServlet {
         
         String nom = request.getParameter("loginName");
         byte[] password = request.getParameter("loginPW").getBytes(StandardCharsets.UTF_8);
+        String decryptedPW = new String(Base64.getDecoder().decode(password));
         String addresse = request.getParameter("addresse");
         int age = Integer.parseInt(request.getParameter("age"));
         
-        Client client = new Client(nom, password, addresse, age);
-        if (!DBaccess("CHECK", client)){
-            DBaccess("ADD", client);
-        }
+        Client client = new Client(nom, decryptedPW, addresse, age);
+        logger.log(Level.INFO, "Client créé dans registerCustomer...");
+        DBaccess("CHECK", client);
+            
         if(session.getAttribute("listeClients") == null){
             setListeDesClients(new ArrayList<>());
         }
@@ -318,60 +330,75 @@ public class accessServlet extends HttpServlet {
     
     }
     
-    private boolean DBaccess(String operation, Client client){
+    private void DBaccess(String operation, Client client){
         Connection connect = null;
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            connect = DriverManager.getConnection("jdbc:mysql://216.221.43.93:3306/hypermedias?zeroDateTimeBehavior=convertToNull&"
+            connect = DriverManager.getConnection("jdbc:mysql://localhost:3306/hypermedias?zeroDateTimeBehavior=convertToNull&"
               + "user=system&password=system");
-            System.out.println("Connected to database!");
+            logger.log(Level.INFO, "Connected to database!");
             try {
                 if (operation.equals("ADD")){
+                    /*
+                    logger.log(Level.INFO, "Operation recognised as ADD...");
                     PreparedStatement prepStmt = connect.prepareStatement("INSERT INTO utilisateurs VALUES (?, ?, ?, ?)");
+                    logger.log(Level.INFO, "Adding client name to ADD query: " + client.getNom());
                     prepStmt.setString(1, client.getNom());
+                    logger.log(Level.INFO, "Adding client Password to ADD query: " + client.getPassword());
                     prepStmt.setBytes(2, client.getPassword());
+                    logger.log(Level.INFO, "Adding client Address to ADD query: " + client.getAddresse());
                     prepStmt.setString(3, client.getAddresse());
+                    logger.log(Level.INFO, "Adding client Age to ADD query: " + client.getAge());
                     prepStmt.setInt(4, client.getAge());
                     prepStmt.executeUpdate();
                     connect.commit();
-                    return true;
+                    */
                 } else if (operation.equals("CHECK")){
+                    logger.log(Level.INFO, "Operation recognised as CHECK...");
                     Statement stmt = connect.createStatement();
-                    ResultSet rs = stmt.executeQuery("SELECT username, password FROM utilisateurs WHERE username = " + client.getNom());
+                    ResultSet rs = stmt.executeQuery("SELECT username, password FROM utilisateurs WHERE username = '" + client.getNom() + "'");
+                    logger.log(Level.INFO, "QUERY INITIATED: SELECT username, password FROM utilisateurs WHERE username = '" + client.getNom() + "'");
                     if (!rs.next()){
-                        System.err.println("Aucun utilisateur avec ce nom.");
-                        // TODO faire kkch avec ça
-                        return false;
+                        logger.log(Level.WARNING, "Aucun utilisateur avec ce nom.");
+                        logger.log(Level.INFO, "Ajout de l'utilisateur...");
+                        PreparedStatement prepStmt = connect.prepareStatement("INSERT INTO utilisateurs (username, password, adresse, age) VALUES(?, ?, ?, ?) ");
+                        logger.log(Level.INFO, "Adding client name to ADD query: " + client.getNom());
+                        prepStmt.setString(1, client.getNom());
+                        logger.log(Level.INFO, "Adding client Password to ADD query: " + client.getPassword());
+                        prepStmt.setString(2, new String(client.getPassword()));
+                        logger.log(Level.INFO, "Adding client Address to ADD query: " + client.getAddresse());
+                        prepStmt.setString(3, client.getAddresse());
+                        logger.log(Level.INFO, "Adding client Age to ADD query: " + client.getAge());
+                        prepStmt.setInt(4, client.getAge());
+                        prepStmt.executeUpdate();
+                        logger.log(Level.INFO, "Utilisateur ajouté!");
                     } else {
                         do {
-                            if (rs.getBytes("password").equals(client.getPassword())){
-                                System.out.println("Utilisateur authentifié!");
+                            if (rs.getString("password").getBytes(StandardCharsets.UTF_8).equals(client.getPassword())){
+                                logger.log(Level.INFO, "Utilisateur authentifié!");
                                 // TODO faire de quoi avec ça
-                                return true;
                             }
                         } while (rs.next());
                     }
                 }
             } catch (SQLException sqle){
-                System.err.println("Erreur SQL:");
-                sqle.printStackTrace();
-                return false;
+                logger.log(Level.SEVERE, "Erreur SQL:");
+                logger.log(Level.SEVERE, sqle.getMessage(), sqle);
             }
         } catch (ClassNotFoundException cnfe){
-            System.err.println("Failed to connect to database: driver error");
-            cnfe.printStackTrace();
+            logger.log(Level.SEVERE, "Failed to connect to database: driver error");
+            logger.log(Level.SEVERE, cnfe.getMessage(), cnfe);
         } catch (SQLException sqle){
-            System.err.println("Failed to connect to database: connexion error");
-            sqle.printStackTrace();
+            logger.log(Level.SEVERE, "Failed to connect to database: connexion error");
+            logger.log(Level.SEVERE, sqle.getMessage(), sqle);
         } finally {
             try {
                 connect.close();
-                return true;
+                fh.close();
             } catch (Exception e){
-                // do nothing, connection ain't open.
+                logger.log(Level.WARNING, e.getMessage(), e);
             }
         }
-        return false;
     }
     
 
