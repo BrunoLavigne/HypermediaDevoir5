@@ -10,6 +10,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
@@ -27,7 +33,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import models.Cart;
-import models.ListeDesClients;
 import views.Client;
 import views.Produits;
 
@@ -274,7 +279,7 @@ public class accessServlet extends HttpServlet {
         session = request.getSession();
         
         String nom = request.getParameter("loginName");
-        byte[] password = request.getParameter("loginPW").getBytes(StandardCharsets.UTF_8);;
+        byte[] password = request.getParameter("loginPW").getBytes(StandardCharsets.UTF_8);
         String addresse = request.getParameter("addresse");
         int age = Integer.parseInt(request.getParameter("age"));
         
@@ -309,6 +314,62 @@ public class accessServlet extends HttpServlet {
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(url);
         dispatcher.forward(request, response);
     
+    }
+    
+    private boolean DBaccess(String operation, Client client){
+        Connection connect = null;
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            connect = DriverManager.getConnection("jdbc:mysql://216.221.43.93:3306/hypermedias?zeroDateTimeBehavior=convertToNull&"
+              + "user=system&password=system");
+            System.out.println("Connected to database!");
+            try {
+                if (operation.equals("ADD")){
+                    PreparedStatement prepStmt = connect.prepareStatement("INSERT INTO utilisateurs VALUES (?, ?, ?, ?)");
+                    prepStmt.setString(1, client.getNom());
+                    prepStmt.setBytes(2, client.getPassword());
+                    prepStmt.setString(3, client.getAddresse());
+                    prepStmt.setInt(4, client.getAge());
+                    prepStmt.executeUpdate();
+                    connect.commit();
+                    return true;
+                } else if (operation.equals("CHECK")){
+                    Statement stmt = connect.createStatement();
+                    ResultSet rs = stmt.executeQuery("SELECT username, password FROM utilisateurs WHERE username = " + client.getNom());
+                    if (!rs.next()){
+                        System.err.println("Aucun utilisateur avec ce nom.");
+                        // TODO faire kkch avec ça
+                        return false;
+                    } else {
+                        do {
+                            if (rs.getBytes("password").equals(client.getPassword())){
+                                System.out.println("Utilisateur authentifié!");
+                                // TODO faire de quoi avec ça
+                                return true;
+                            }
+                        } while (rs.next());
+                    }
+                }
+            } catch (SQLException sqle){
+                System.err.println("Erreur SQL:");
+                sqle.printStackTrace();
+                return false;
+            }
+        } catch (ClassNotFoundException cnfe){
+            System.err.println("Failed to connect to database: driver error");
+            cnfe.printStackTrace();
+        } catch (SQLException sqle){
+            System.err.println("Failed to connect to database: connexion error");
+            sqle.printStackTrace();
+        } finally {
+            try {
+                connect.close();
+                return true;
+            } catch (Exception e){
+                // do nothing, connection ain't open.
+            }
+        }
+        return false;
     }
     
 
