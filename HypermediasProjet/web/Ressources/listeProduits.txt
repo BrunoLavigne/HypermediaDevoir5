@@ -1,4 +1,10 @@
-000000001;CRAYONS;Stylos personnalises;Stylos personnalises avec le nom de votre entreprise;image001.jpg;0.99;TYPE_LARGE_QTY
-000000002;VETEMENTS;Polos personnalises;Polos personnalises avec le nom de votre entreprise;image002.jpg;24.99;TYPE_UNITARY
-000000003;VETEMENTS;Casquettes personnalisees;Casquettes personnalises avec le nom de votre entreprise;image003.jpg;9.99;TYPE_UNITARY
-000000004;STICKERS;Autocollants personnalises;Autocollants personnalises avec le nom de votre entreprise;image004.jpg;3.99;TYPE_SMALL_QTY
+000000001;CRAYONS;Stylos personnalises;Magnifique crayon a l'encre bleu. Il vous sera possible d'inscrire le nom de votre compagnie sur celui-ci.;pen.jpg;0.99;TYPE_LARGE_QTY
+000000002;VETEMENTS;Polos personnalises;Superbe polo a manche courte. Plusieur choix de couleur. Il est possible de faire broder le nom de votre compagnie;tshirt.jpg;24.99;TYPE_UNITARY
+000000003;VETEMENTS;Casquettes personnalisees;Casquettes personnalises avec le nom de votre entreprise;hat.jpg;9.99;TYPE_UNITARY
+000000004;STICKERS;Autocollants personnalises;Autocollants personnalises avec le nom de votre entreprise. Il vous sera possible de le coller partout ou vous le desirez;sticker.png;3.99;TYPE_SMALL_QTY
+000000005;CRAYONS;Stylos personnalises;Le plus beau crayon en bois jamais produit. L'efface est la meilleur du monde;pencil.jpg;0.99;TYPE_LARGE_QTY
+000000006;Encre;Encre;Cartouche d'encre disponible pour tout les types d'imprimante au monde;ink.jpg;24.99;TYPE_LARGE_QTY
+000000007;CRAYONS;Stylos personnalises;Marqueur offert en plusieurs couleur.;highlighter.jpg;4.99;TYPE_LARGE_QTY
+000000008;VETEMENTS;Hoodie personnalises;Coton ouate chaud et douillet pour porter lors des soiree froide.;hoodie.jpg;12.99;TYPE_UNITARY
+000000009;VETEMENTS;Jacket personnalises;Manteau de printemps en nylon resistant aux intemperie;jacket.jpg;109.99;TYPE_UNITARY
+000000010;STICKERS;Autocollants personnalises;Collants personnalises de toute les formes et le couleurs possible;stickers.png;1.49;TYPE_LARGE_QTY

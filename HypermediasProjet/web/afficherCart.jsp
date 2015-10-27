@@ -10,6 +10,13 @@
         <link href="Ressources/css/heroic-features.css" rel="stylesheet">
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
         
+        <style>
+            .table tbody th {
+                text-align: center;
+                vertical-align: middle;
+            }
+        </style>
+        
         <title>Liste des produits</title>
     </head>
     <body>
@@ -30,7 +37,7 @@
             
             <div class="row" style="text-align:center">
             
-            <div class="col-lg-8 col-md-offset-2">
+            <div class="col-lg-10 col-md-offset-1">
                 
                 <h3>Liste des produits</h3></br>
                 
@@ -52,7 +59,8 @@
 
                             <tr style="text-align:center">
 
-                                <td>${items.nom}</td>
+                                <c:set var="imagePath" value="Ressources/images/${items.imageURL}"/>
+                                <td><img src="${imagePath}" class="img-rounded" alt="Cinque Terre" width="100" height="100"></td>
                                 <td>${items.description}</td>
                                 <td>${items.baseUnitPrice} $<td>
 

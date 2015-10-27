@@ -25,6 +25,7 @@
             <header class="jumbotron hero-spacer">
                                 
                 <h1 style="text-align:center">Articles de bureau</h1>
+                <h4 style="text-align:center">Administrator access</h4>
                        
             </header>
 
@@ -38,64 +39,41 @@
             <div class="row" style="text-align:center">
             
             <div class="col-lg-10 col-md-offset-1">
-                
-                <h3>Produits vedette </h3></br>
+
                       
-                <form method="POST" action="accessServlet">
-                    
-                    <input type="hidden" name="actionType" value="ajouterProduit">
-                    <input type="hidden" name="productNumber" value="00000000001" >
-                    
-                <table class="table">
-                              <colgroup>
-                                <col class="col-md-6">
-                                <col class="col-md-4">
-                                <col class="col-md-1">
-                                <col class="col-md-1">
-                              </colgroup>
 
-                                <tr>
-                                  <td><img src="Ressources/images/stickers.png" class="img-thumbnail" alt="pencil" width="400" height="400"></td>
-    
-                                  <td style="vertical-align:middle">Beau crayon &agrave; l'encre bleu avec une fine pointe pour signer des ch&egrave;ques ou des contrats</td>
-                                  <td style="vertical-align:middle">50.50$</td>
-
-                                  <td style="vertical-align:middle">
-                                    <input class="btn-primary" type="submit" value="Submit" name='addToCart' id='btnCart'>
-                                  </td>
-                                </tr>
-
-                            </table>
-                </form>
          
-                <h3>Liste des produits</h3></br>
+                <h3>Liste des produits</h3>
+                
+                </br>
+                
+                <h5>Choix du produit vedette</h5>
+                
+                <br>
                 
                 <table class="table">
                     <tr>
-                        <th>nom</th>
-                        <th>Description</th>
-                        <th>Prix</th>
-                        <th>Quantite</th>                
-                        <th>Order</th>
+                        <th>Code</th>
+                        <th>Image</th>
+                        <th>Description</th>          
+                        <th>Selectionner</th>
                     </tr>
 
                     <c:forEach var="items" items="${listeProduits}">
 
                         <form method="POST" action="accessServlet">
 
-                            <input type="hidden" name="actionType" value="ajouterProduit">
+                            <input type="hidden" name="actionType" value="selectProduitVedette">
                             <input type="hidden" name="productNumber" value="${items.code}" >
 
                             <tr style="text-align:center">
 
                                 <c:set var="imagePath" value="Ressources/images/${items.imageURL}"/>
+                                
+                                <td>${items.code}</td>
                                 <td><img src="${imagePath}" class="img-rounded" alt="Cinque Terre" width="100" height="100"></td>
                                 <td>${items.description}</td>
-                                <td>${items.baseUnitPrice} $<td>
-
-                                <input type="text" value="1" id="qty" name="qty" style="text-align:center">
-
-                                <td><input class="btn-default" type="submit" value="Submit" name='addToCart' id='btnCart'></td>
+                                <td><input class="btn-danger" type="submit" value="Selectionner" name='selectProduitVedette' id='btnStarItem'></td>
 
                             </tr>
 

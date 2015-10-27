@@ -12,6 +12,13 @@
         <link href="Ressources/css/heroic-features.css" rel="stylesheet">
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
         
+        <style>
+            th {
+                text-align: center;
+                vertical-align: middle;
+            }
+        </style>
+        
         <title>Checkout</title>
 
     </head>
@@ -33,7 +40,7 @@
             
             <div class="row" style="text-align:center">
             
-            <div class="col-lg-6 col-md-offset-3">
+            <div class="col-lg-10 col-md-offset-1">
                 
                 <h3>Checkout</h3>
                 
@@ -60,6 +67,7 @@
                             <th>Cancel</th>
 
                         </tr>
+                        
 
                         <c:forEach var="check" items="${requestScope.cart2}">
 
