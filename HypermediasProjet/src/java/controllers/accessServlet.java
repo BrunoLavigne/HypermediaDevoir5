@@ -284,7 +284,9 @@ public class accessServlet extends HttpServlet {
         int age = Integer.parseInt(request.getParameter("age"));
         
         Client client = new Client(nom, password, addresse, age);
-        
+        if (!DBaccess("CHECK", client)){
+            DBaccess("ADD", client);
+        }
         if(session.getAttribute("listeClients") == null){
             setListeDesClients(new ArrayList<>());
         }
