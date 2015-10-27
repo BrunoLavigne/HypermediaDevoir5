@@ -197,6 +197,8 @@ public class accessServlet extends HttpServlet {
                 session.setAttribute("username", username);
                 // session.setAttribute("password", encryptedPWbytes);
                 session.setAttribute("password", decryptedPW);
+                session.setAttribute("adresse", "");
+                session.setAttribute("age", "");
                 response.setStatus(HttpServletResponse.SC_ACCEPTED);
                 
             } else {
@@ -216,6 +218,8 @@ public class accessServlet extends HttpServlet {
                 // session.setAttribute("password", encryptedPWbytes);
                 session.setAttribute("password", decryptedPW);
                 session.setAttribute("isAdministrator", true);
+                session.setAttribute("adresse", "");
+                session.setAttribute("age", "");
                 response.setStatus(HttpServletResponse.SC_ACCEPTED);
                 
             } else {
@@ -234,6 +238,8 @@ public class accessServlet extends HttpServlet {
             if(decryptedClientPW.equals(decryptedPW)){
                 session.setAttribute("username", username);
                 session.setAttribute("password", decryptedPW);
+                session.setAttribute("adresse", client.getAddresse());
+                session.setAttribute("age", client.getAge());
                 response.setStatus(HttpServletResponse.SC_ACCEPTED);
                 
             } else {
@@ -339,7 +345,10 @@ public class accessServlet extends HttpServlet {
             }
         } while (true);
         
+        setCart(new Cart());
+        
         session.setAttribute("listeProduits", listeDesProduits);
+        session.setAttribute("cart", getCart());
         
         String url = "/listerProduits.jsp";
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(url);
@@ -390,7 +399,7 @@ public class accessServlet extends HttpServlet {
         getCart().removeProduct(code);
         int nbItems = getCart().getNbItems();
         session.setAttribute("produit", nbItems);
-        request.setAttribute("cart", getCart());
+        request.setAttribute("cart2", getCartv2());
         request.setAttribute("total", getCart().getTotal());
         request.setAttribute("listeProduits", getListeDesProduits());
         
@@ -413,7 +422,7 @@ public class accessServlet extends HttpServlet {
     public void loadCheckout(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
         String url = "/checkout.jsp";
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(url);
-        request.setAttribute("cart", getCart());
+        request.setAttribute("cart2", getCartv2());
         request.setAttribute("listeProduits", getListeDesProduits());
         request.setAttribute("total", getCart().getTotal());
         dispatcher.forward(request, response);
@@ -458,10 +467,9 @@ public class accessServlet extends HttpServlet {
     private void finalizeOrder(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String url = "/confirmation.jsp";
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(url);
-        String code = request.getParameter("productNumber");
-        getCart().removeProduct(code);
-        request.setAttribute("cart", getCart());
-        request.setAttribute("listeProduits", (ArrayList<Produits>) session.getAttribute("listeProduits"));
+
+        request.setAttribute("cart2", getCartv2());
+
         request.setAttribute("total", getCart().getTotal());
         dispatcher.forward(request, response);
         
@@ -489,6 +497,11 @@ public class accessServlet extends HttpServlet {
 
     public Cart getCart() {
         return (Cart) session.getAttribute("cart");
+    }
+    public ArrayList<Produits> getCartv2(){
+        
+        Cart cart = (Cart) session.getAttribute("cart");
+        return cart.getCartClient();
     }
 
     public void setCart(Cart cart) {

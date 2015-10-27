@@ -1,4 +1,4 @@
-000000001;CRAYONS;Stylos personnalises;Stylos personnalises avec le nom de votre entreprise. Disponibles en grande quantitees.;image001.jpg;0.99;TYPE_LARGE_QTY
-000000002;VETEMENTS;Polos personnalises;Polos personnalises avec le nom de votre entreprise. Disponibles a l'unite.;image002.jpg;24.99;TYPE_UNITARY
-000000003;VETEMENTS;Casquettes personnalisees;Casquettes personnalises avec le nom de votre entreprise. Disponibles a l'unite.;image003.jpg;9.99;TYPE_UNITARY
-000000004;STICKERS;Autocollants personnalises;Autocollants personnalises avec le nom de votre entreprise. Disponibles en quantitees limitees.;image004.jpg;3.99;TYPE_SMALL_QTY
+000000001;CRAYONS;Stylos personnalises;Stylos personnalises avec le nom de votre entreprise;image001.jpg;0.99;TYPE_LARGE_QTY
+000000002;VETEMENTS;Polos personnalises;Polos personnalises avec le nom de votre entreprise;image002.jpg;24.99;TYPE_UNITARY
+000000003;VETEMENTS;Casquettes personnalisees;Casquettes personnalises avec le nom de votre entreprise;image003.jpg;9.99;TYPE_UNITARY
+000000004;STICKERS;Autocollants personnalises;Autocollants personnalises avec le nom de votre entreprise;image004.jpg;3.99;TYPE_SMALL_QTY
