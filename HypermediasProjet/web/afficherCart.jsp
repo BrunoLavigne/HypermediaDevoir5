@@ -39,6 +39,43 @@
             
             <div class="col-lg-10 col-md-offset-1">
                 
+                <c:if test="${not empty produitVedette}">
+                    
+                <h3>Produits vedette </h3></br>
+                
+                <c:out value=""/>
+                      
+                <form method="POST" action="accessServlet">
+                    
+                    <input type="hidden" name="actionType" value="ajouterProduit">
+                    <input type="hidden" name="productNumber" value="${produitVedette.code}" >
+                    
+                <table class="table">
+                    
+                              <colgroup>
+                                <col class="col-md-6">
+                                <col class="col-md-3">
+                                <col class="col-md-1">
+                                <col class="col-md-1">
+                                <col class="col-md-1">
+                              </colgroup>
+
+                                <tr>
+                                  <td><img src="Ressources/images/${produitVedette.imageURL}" class="img-thumbnail" alt="pencil" width="250" height="250"></td>
+    
+                                  <td style="vertical-align:middle">${produitVedette.description}</td>
+                                  <td style="vertical-align:middle">${produitVedette.baseUnitPrice}</td>
+                                  <td style="vertical-align:middle"><input type="text" value="1" id="qty" name="qty" style="text-align:center"></td>
+                                  <td style="vertical-align:middle">
+                                    <input class="btn-primary" type="submit" value="Submit" name='addToCart' id='btnCart'>
+                                  </td>
+                                </tr>
+
+                            </table>
+                </form>
+                
+                </c:if>
+                
                 <h3>Liste des produits</h3></br>
                 
                 <table class="table">

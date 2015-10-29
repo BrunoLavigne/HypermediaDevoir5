@@ -151,6 +151,12 @@ public class accessServlet extends HttpServlet {
                     System.out.println("Beginning checkout confirmation function...");
                     finalizeOrder(request, response);
                     break;
+                
+                case "selectProduitVedette":
+                    System.out.println("Request selectProduitVedette action type found...");
+                    System.out.println("Beginning selectProduitVedette function...");
+                    selectProductVedette(request, response);
+                    break;
                     
             }
         }  
@@ -416,6 +422,7 @@ public class accessServlet extends HttpServlet {
         
         session.setAttribute("listeProduits", listeDesProduits);
         session.setAttribute("cart", getCart());
+        
         if((boolean)session.getAttribute("isAdministrator")){
             url = "/selectProduitVedette.jsp";
         } else{
@@ -497,6 +504,22 @@ public class accessServlet extends HttpServlet {
         request.setAttribute("listeProduits", getListeDesProduits());
         request.setAttribute("total", getCart().getTotal());
         dispatcher.forward(request, response);
+    }
+    
+    private void selectProductVedette(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
+        
+        String code = request.getParameter("productNumber");
+        Produits leProduitVedette = getProductByCode(code);
+        leProduitVedette.setProduitVedette(true);
+        
+        String url = "/index.html";
+        RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(url);
+
+        request.setAttribute("listeProduits", getListeDesProduits());
+        session.setAttribute("produitVedette", leProduitVedette);
+
+        dispatcher.forward(request, response);
+        
     }
     
     /*

@@ -40,9 +40,6 @@
             
             <div class="col-lg-10 col-md-offset-1">
 
-                      
-
-         
                 <h3>Liste des produits</h3>
                 
                 </br>
