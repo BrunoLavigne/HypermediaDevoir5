@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -76,20 +75,11 @@ public class accessServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
-            fh = new FileHandler("loggerExample.log", true);
-            fh.setFormatter(new SimpleFormatter());
-            logger.addHandler(fh);
-            logger.setLevel(Level.ALL);
-        } catch (SecurityException | IOException e) {
-            e.printStackTrace();
-        }
-        
-        logger.log(Level.INFO, "Executing doPost() method...");
+        System.out.println("Executing doPost() method...");
         
         // Obtention des paramètres de la requête.
         Map<String, String> map = new HashMap<>();
-        logger.log(Level.INFO, "Reading request parameters...");
+        System.out.println("Reading request parameters...");
         Enumeration nomsParametres = request.getParameterNames();   
         
         while (nomsParametres.hasMoreElements()) {
@@ -97,7 +87,7 @@ public class accessServlet extends HttpServlet {
             String key = (String) nomsParametres.nextElement();
             String value = request.getParameter(key);
             map.put(key, value);
-            logger.log(Level.INFO, "Parameter found: [" + key + "] with value: [" + value + "]");
+            System.out.println("Parameter found: [" + key + "] with value: [" + value + "]");
             
 	}
         
@@ -109,8 +99,8 @@ public class accessServlet extends HttpServlet {
             switch (actionType) {
                 
                 case "login":
-                    logger.log(Level.INFO, "Request login action type found...");
-                    logger.log(Level.INFO, "Beginning log-in function...");
+                    System.out.println("Request login action type found...");
+                    System.out.println("Beginning log-in function...");
                     login(request, response);
                     break;
                 
@@ -123,45 +113,51 @@ public class accessServlet extends HttpServlet {
                     break;
                     
                 case "returnToLogin":
-                    logger.log(Level.INFO, "Request return to login action type found...");
-                    logger.log(Level.INFO, "Beginning return to index function...");
+                    System.out.println("Request return to login action type found...");
+                    System.out.println("Beginning return to index function...");
                     returnToLogin(request, response);
                     break;
                     
                 case "ajouterProduit":
-                    logger.log(Level.INFO, "Request add product to cart action type found...");
-                    logger.log(Level.INFO, "Beginning add-to-cart function...");
+                    System.out.println("Request add product to cart action type found...");
+                    System.out.println("Beginning add-to-cart function...");
                     addToCart(request, response);
                     break;
                     
                 case "retirerProduit":
-                    logger.log(Level.INFO, "Request substract product from cart action type found...");
-                    logger.log(Level.INFO, "Beginning substract-from-cart function...");
+                    System.out.println("Request substract product from cart action type found...");
+                    System.out.println("Beginning substract-from-cart function...");
                     removeFromCart(request, response);
                     break;
                     
                 case "checkout":
-                    logger.log(Level.INFO, "Request checkout action type found...");
-                    logger.log(Level.INFO, "Beginning checkout function...");
+                    System.out.println("Request checkout action type found...");
+                    System.out.println("Beginning checkout function...");
                     loadCheckout(request, response);
                     break;
                     
                 case "viderCart":
-                    logger.log(Level.INFO, "Request empty-the-cart action type found...");
-                    logger.log(Level.INFO, "Beginning empty-the-cart function...");
+                    System.out.println("Request empty-the-cart action type found...");
+                    System.out.println("Beginning empty-the-cart function...");
                     clearCart(request, response);
                     break;
                     
                 case "cancel":
-                    logger.log(Level.INFO, "Request checkout cancellation action type found...");
-                    logger.log(Level.INFO, "Beginning checkout cancellation function...");
+                    System.out.println("Request checkout cancellation action type found...");
+                    System.out.println("Beginning checkout cancellation function...");
                     clearCart(request, response);
                     break;
                     
                 case "confirmation":
-                    logger.log(Level.INFO, "Request checkout confirmation action type found...");
-                    logger.log(Level.INFO, "Beginning checkout confirmation function...");
+                    System.out.println("Request checkout confirmation action type found...");
+                    System.out.println("Beginning checkout confirmation function...");
                     finalizeOrder(request, response);
+                    break;
+                
+                case "selectProduitVedette":
+                    System.out.println("Request selectProduitVedette action type found...");
+                    System.out.println("Beginning selectProduitVedette function...");
+                    selectProductVedette(request, response);
                     break;
                     
             }
@@ -516,6 +512,22 @@ public class accessServlet extends HttpServlet {
         request.setAttribute("listeProduits", getListeDesProduits());
         request.setAttribute("total", getCart().getTotal());
         dispatcher.forward(request, response);
+    }
+    
+    private void selectProductVedette(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
+        
+        String code = request.getParameter("productNumber");
+        Produits leProduitVedette = getProductByCode(code);
+        leProduitVedette.setProduitVedette(true);
+        
+        String url = "/index.html";
+        RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(url);
+
+        request.setAttribute("listeProduits", getListeDesProduits());
+        session.setAttribute("produitVedette", leProduitVedette);
+
+        dispatcher.forward(request, response);
+        
     }
     
     /*

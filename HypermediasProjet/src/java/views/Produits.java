@@ -21,6 +21,7 @@ public class Produits implements Serializable{
     private float baseUnitPrice;
     private String qtyType;
     private int qty;
+    private boolean produitVedette;
     
     public Produits() {
         setCode("");
@@ -31,6 +32,7 @@ public class Produits implements Serializable{
         setBaseUnitPrice(0);
         setQtyType("");
         setQty(0);
+        setProduitVedette(false);
     }
     
     public Produits(String code, String categorie, String nom, String description, String imageURL, float baseUnitPrice, String qtyType, int qty){
@@ -107,6 +109,14 @@ public class Produits implements Serializable{
 
     public void setQty(int qty) {
         this.qty = qty;
+    }
+
+    public boolean isProduitVedette() {
+        return produitVedette;
+    }
+
+    public void setProduitVedette(boolean produitVedette) {
+        this.produitVedette = produitVedette;
     }
     
 }
