@@ -210,6 +210,7 @@ public class accessServlet extends HttpServlet {
                 session.setAttribute("username", username);
                 // session.setAttribute("password", encryptedPWbytes);
                 session.setAttribute("password", decryptedPW);
+                session.setAttribute("isAdministrator", false);
                 session.setAttribute("adresse", "");
                 session.setAttribute("age", "");
                 response.setStatus(HttpServletResponse.SC_ACCEPTED);
@@ -294,16 +295,20 @@ public class accessServlet extends HttpServlet {
         Client client = new Client(nom, decryptedPW, addresse, age);
         logger.log(Level.INFO, "Client créé dans registerCustomer...");
         DBaccess("CHECK", client);
-            
+        logger.log(Level.INFO, "Client vérifié / créé dans la base de données");
+        session.setAttribute("isAdministrator", false);
         if(session.getAttribute("listeClients") == null){
             setListeDesClients(new ArrayList<>());
         }
         
         getListeDesClients().add(client);
+        logger.log(Level.INFO, "Client vérifié / créé dans la base de données");
+        // loadProducts(request, response);
         
         String url = "/index.html";
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(url);
         dispatcher.forward(request, response);
+        
         
     }
     
