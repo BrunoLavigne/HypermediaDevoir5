@@ -435,8 +435,12 @@ public class accessServlet extends HttpServlet {
         
         session.setAttribute("listeProduits", listeDesProduits);
         session.setAttribute("cart", getCart());
-        
-        String url = "/listerProduits.jsp";
+        String url = "";
+        if((boolean)session.getAttribute("isAdministrator")){
+            url = "/selectProduitVedette.jsp";
+        } else{
+            url = "/listerProduits.jsp";
+        }
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(url);
         dispatcher.forward(request, response);
 
