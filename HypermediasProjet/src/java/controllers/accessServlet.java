@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -76,10 +77,20 @@ public class accessServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         System.out.println("Executing doPost() method...");
+        try {
+            
+            fh=new FileHandler("loggerExample.log", false);
+            fh.setFormatter(new SimpleFormatter());
+            logger.addHandler(fh);
+            logger.setLevel(Level.CONFIG);
+        } catch (IOException ioe){
+            logger.log(Level.INFO, "IO ERROR IN LOGGER FILEHANDLER");
+        }
+        
         
         // Obtention des paramètres de la requête.
         Map<String, String> map = new HashMap<>();
-        System.out.println("Reading request parameters...");
+        logger.log(Level.INFO, "Reading request parameters...");
         Enumeration nomsParametres = request.getParameterNames();   
         
         while (nomsParametres.hasMoreElements()) {
@@ -87,7 +98,7 @@ public class accessServlet extends HttpServlet {
             String key = (String) nomsParametres.nextElement();
             String value = request.getParameter(key);
             map.put(key, value);
-            System.out.println("Parameter found: [" + key + "] with value: [" + value + "]");
+            logger.log(Level.INFO, "Parameter found: [" + key + "] with value: [" + value + "]");
             
 	}
         
@@ -99,8 +110,8 @@ public class accessServlet extends HttpServlet {
             switch (actionType) {
                 
                 case "login":
-                    System.out.println("Request login action type found...");
-                    System.out.println("Beginning log-in function...");
+                    logger.log(Level.INFO, "Request login action type found...");
+                    logger.log(Level.INFO, "Beginning log-in function...");
                     login(request, response);
                     break;
                 
@@ -113,50 +124,50 @@ public class accessServlet extends HttpServlet {
                     break;
                     
                 case "returnToLogin":
-                    System.out.println("Request return to login action type found...");
-                    System.out.println("Beginning return to index function...");
+                    logger.log(Level.INFO, "Request return to login action type found...");
+                    logger.log(Level.INFO, "Beginning return to index function...");
                     returnToLogin(request, response);
                     break;
                     
                 case "ajouterProduit":
-                    System.out.println("Request add product to cart action type found...");
-                    System.out.println("Beginning add-to-cart function...");
+                    logger.log(Level.INFO, "Request add product to cart action type found...");
+                    logger.log(Level.INFO, "Beginning add-to-cart function...");
                     addToCart(request, response);
                     break;
                     
                 case "retirerProduit":
-                    System.out.println("Request substract product from cart action type found...");
-                    System.out.println("Beginning substract-from-cart function...");
+                    logger.log(Level.INFO, "Request substract product from cart action type found...");
+                    logger.log(Level.INFO, "Beginning substract-from-cart function...");
                     removeFromCart(request, response);
                     break;
                     
                 case "checkout":
-                    System.out.println("Request checkout action type found...");
-                    System.out.println("Beginning checkout function...");
+                    logger.log(Level.INFO, "Request checkout action type found...");
+                    logger.log(Level.INFO, "Beginning checkout function...");
                     loadCheckout(request, response);
                     break;
                     
                 case "viderCart":
-                    System.out.println("Request empty-the-cart action type found...");
-                    System.out.println("Beginning empty-the-cart function...");
+                    logger.log(Level.INFO, "Request empty-the-cart action type found...");
+                    logger.log(Level.INFO, "Beginning empty-the-cart function...");
                     clearCart(request, response);
                     break;
                     
                 case "cancel":
-                    System.out.println("Request checkout cancellation action type found...");
-                    System.out.println("Beginning checkout cancellation function...");
+                    logger.log(Level.INFO, "Request checkout cancellation action type found...");
+                    logger.log(Level.INFO, "Beginning checkout cancellation function...");
                     clearCart(request, response);
                     break;
                     
                 case "confirmation":
-                    System.out.println("Request checkout confirmation action type found...");
-                    System.out.println("Beginning checkout confirmation function...");
+                    logger.log(Level.INFO, "Request checkout confirmation action type found...");
+                    logger.log(Level.INFO, "Beginning checkout confirmation function...");
                     finalizeOrder(request, response);
                     break;
                 
                 case "selectProduitVedette":
-                    System.out.println("Request selectProduitVedette action type found...");
-                    System.out.println("Beginning selectProduitVedette function...");
+                    logger.log(Level.INFO, "Request selectProduitVedette action type found...");
+                    logger.log(Level.INFO, "Beginning selectProduitVedette function...");
                     selectProductVedette(request, response);
                     break;
                     
@@ -242,8 +253,7 @@ public class accessServlet extends HttpServlet {
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                 
             }
-            
-        } else if(findClientName(username) != null){
+        } /* else if(findClientName(username) != null){
             Client client = findClientName(username);
             
             String clientPW = client.getPassword();
@@ -253,19 +263,49 @@ public class accessServlet extends HttpServlet {
                 session.setAttribute("password", decryptedPW);
                 session.setAttribute("adresse", client.getAddresse());
                 session.setAttribute("age", client.getAge());
+                session.setAttribute("isAdministrator", false);
                 response.setStatus(HttpServletResponse.SC_ACCEPTED);
                 
             } else {
                 logger.log(Level.INFO, "Password rejected!");
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);  
             }
-        }
+        } */
         
         else {
-            
-            logger.log(Level.INFO, "Invalid unsername!");
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            
+            try {
+                Connection connect = null;
+                Class.forName("com.mysql.jdbc.Driver");
+                connect = DriverManager.getConnection("jdbc:mysql://localhost:3306/hypermedias?zeroDateTimeBehavior=convertToNull&"
+                  + "user=system&password=system");
+                logger.log(Level.INFO, "Connected to database!");
+                Statement stmt = connect.createStatement();
+                ResultSet rs = stmt.executeQuery("SELECT username, password, adresse, age FROM utilisateurs WHERE username = '" + username + "'");
+                logger.log(Level.INFO, "QUERY INITIATED: SELECT username, password, adresse, age FROM utilisateurs WHERE username = '" + username + "'");
+                if (!rs.next()){
+                    logger.log(Level.WARNING, "Aucun utilisateur avec ce nom.");
+                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                } else {
+                    do {
+                        if (rs.getString("password").equals(decryptedPW)){
+                            logger.log(Level.INFO, "Utilisateur authentifié!");
+                            session.setAttribute("username", rs.getString(1));
+                            logger.log(Level.INFO, "Username: " + rs.getString(1));
+                            session.setAttribute("password", rs.getString(2));
+                            logger.log(Level.INFO, "Password: " + rs.getString(2));
+                            session.setAttribute("adresse", rs.getString(3));
+                            logger.log(Level.INFO, "Addresse: " + rs.getString(4));
+                            session.setAttribute("age", rs.getInt(4));
+                            logger.log(Level.INFO, "Age: " + rs.getString(4));
+                            session.setAttribute("isAdministrator", false);
+                            response.setStatus(HttpServletResponse.SC_ACCEPTED);
+                        }
+                    } while (rs.next());
+                }
+            } catch (SQLException | ClassNotFoundException e){
+                logger.log(Level.SEVERE, "Database connection error!");
+                logger.log(Level.SEVERE, e.getMessage());
+            }
         }
                                       
         try {
